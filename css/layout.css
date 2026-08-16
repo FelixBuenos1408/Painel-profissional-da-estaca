@@ -1,0 +1,280 @@
+/* ==============================================================================
+   GUIA PROFISSIONAL DA ESTACA - LAYOUT & ESTRUTURAÇÃO
+   ============================================================================== */
+
+/* Container Principal */
+.app-container {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+/* Cabeçalho Principal (Header) */
+.main-header {
+  background-color: var(--surface-card);
+  border-bottom: 1px solid var(--border-light);
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: blur(12px);
+  background-color: rgba(255, 255, 255, 0.94);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4.5rem;
+}
+
+.brand-area {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  text-decoration: none;
+}
+
+.brand-logo-img {
+  width: 44px !important;
+  height: 44px !important;
+  max-width: 44px !important;
+  max-height: 44px !important;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  object-position: center top;
+  border: 1.5px solid var(--primary-200);
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.18);
+  flex-shrink: 0;
+  display: block;
+  transition: transform var(--transition-fast);
+}
+
+.brand-area:hover .brand-logo-img {
+  transform: scale(1.05);
+}
+
+.brand-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.brand-subtitle {
+  font-size: 0.775rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Barra de Status do Administrador no Header */
+.admin-badge-container {
+  display: none;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.admin-badge-container.active {
+  display: flex;
+}
+
+.admin-info-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  background-color: var(--primary-50);
+  border: 1px solid var(--primary-200);
+  border-radius: var(--radius-full);
+  font-size: 0.8125rem;
+  color: var(--primary-800);
+  font-weight: 600;
+}
+
+.admin-info-pill .admin-name {
+  font-weight: 600;
+}
+
+.admin-info-pill .admin-ward-tag {
+  background-color: var(--primary-600);
+  color: var(--text-inverse);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+}
+
+/* Hero Section / Banner de Apresentação */
+.hero-section {
+  background: linear-gradient(180deg, #ffffff 0%, var(--surface-bg) 100%);
+  padding: 3rem 0 2rem 0;
+  text-align: center;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.hero-title {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.03em;
+}
+
+.hero-title span {
+  background: linear-gradient(135deg, var(--primary-600), var(--primary-800));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-description {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  max-width: 680px;
+  margin: 0 auto 2rem auto;
+}
+
+/* Seção de Busca e Filtros */
+.search-filter-section {
+  padding: 2rem 0 1rem 0;
+}
+
+.search-box-wrapper {
+  max-width: 720px;
+  margin: 0 auto 1.5rem auto;
+  position: relative;
+}
+
+.filter-categories-container {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Seção de Resultados */
+.results-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.results-count {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.results-count strong {
+  color: var(--text-main);
+}
+
+/* Grid de Profissionais */
+.professionals-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+}
+
+@media (min-width: 640px) {
+  .professionals-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .professionals-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Rodapé (Footer) */
+.main-footer {
+  margin-top: auto;
+  background-color: var(--surface-card);
+  border-top: 1px solid var(--border-light);
+  padding: 2.5rem 0;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.75rem;
+}
+
+.footer-text {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.footer-subtext {
+  font-size: 0.775rem;
+  color: var(--text-light);
+}
+
+.footer-alas-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+}
+
+.footer-ala-item {
+  display: inline-flex;
+  align-items: center;
+}
+
+.footer-ala-item:not(:last-child)::after {
+  content: "•";
+  margin-left: 0.5rem;
+  color: var(--text-light);
+}
+
+/* Responsividade Mobile */
+@media (max-width: 640px) {
+  .header-content {
+    height: auto;
+    padding: 0.875rem 0;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  
+  .hero-title {
+    font-size: 1.75rem;
+  }
+  
+  .hero-description {
+    font-size: 0.95rem;
+  }
+  
+  .admin-badge-container {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
