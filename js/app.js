@@ -53,6 +53,10 @@ const estado = {
   profissionalEmEdicao: null,
   arquivoFotoSelecionado: null,
   fotoOriginalUrl: null,
+  arquivoLogoSelecionado: null,
+  logoOriginalUrl: null,
+  arquivosPortfolioSelecionados: [],
+  portfolioUrlsOriginais: [],
   carregando: false
 };
 
@@ -94,6 +98,15 @@ const DOM = {
   photoPreviewBox: document.getElementById('photoPreviewBox'),
   proPhotoInput: document.getElementById('proPhotoInput'),
   btnRemovePhoto: document.getElementById('btnRemovePhoto'),
+  
+  logoUploadWrapper: document.getElementById('logoUploadWrapper'),
+  logoPreviewBox: document.getElementById('logoPreviewBox'),
+  proLogoInput: document.getElementById('proLogoInput'),
+  btnRemoveLogo: document.getElementById('btnRemoveLogo'),
+  
+  proPortfolioInput: document.getElementById('proPortfolioInput'),
+  portfolioPreviewGrid: document.getElementById('portfolioPreviewGrid'),
+
   btnSaveProSubmit: document.getElementById('btnSaveProSubmit'),
 
   // Modal de Exclusão
@@ -306,7 +319,138 @@ function configurarUploadFoto() {
   });
 
   DOM.btnRemovePhoto.addEventListener('click', limparFotoSelecionada);
+  
+  // Configuração para Logo
+  DOM.proLogoInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      mostrarToast('Por favor, selecione um arquivo de imagem (PNG, JPG ou WEBP).', 'error');
+      DOM.proLogoInput.value = '';
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      mostrarToast('A logo não pode ultrapassar 5MB.', 'error');
+      DOM.proLogoInput.value = '';
+      return;
+    }
+
+    estado.arquivoLogoSelecionado = file;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      DOM.logoPreviewBox.innerHTML = `<img src="${event.target.result}" alt="Pré-visualização da logo" />`;
+      DOM.logoUploadWrapper.classList.add('has-file');
+    };
+    reader.readAsDataURL(file);
+  });
+
+  DOM.btnRemoveLogo.addEventListener('click', limparLogoSelecionada);
+  
+  // Configuração para Portfólio
+  DOM.proPortfolioInput.addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    // Calcula limite de 5 arquivos (novos + existentes preservados)
+    const totalFiles = estado.arquivosPortfolioSelecionados.length + estado.portfolioUrlsOriginais.length + files.length;
+    if (totalFiles > 5) {
+      mostrarToast('Você pode ter no máximo 5 imagens no portfólio.', 'error');
+      DOM.proPortfolioInput.value = '';
+      return;
+    }
+
+    files.forEach(file => {
+      if (!file.type.startsWith('image/')) {
+        mostrarToast(`O arquivo ${file.name} não é uma imagem válida.`, 'error');
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        mostrarToast(`A imagem ${file.name} ultrapassa 5MB.`, 'error');
+        return;
+      }
+
+      const id = Date.now() + Math.random().toString(36).substring(2);
+      estado.arquivosPortfolioSelecionados.push({ id, file });
+    });
+
+    DOM.proPortfolioInput.value = '';
+    renderizarPreviewPortfolio();
+  });
+  
+  // Configuração das abas de imagem
+  document.querySelectorAll('.image-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.image-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.image-tab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.getAttribute('data-tab-target');
+      document.getElementById(target).classList.add('active');
+    });
+  });
+
+  // Configuração das abas do modal de perfil (Instagram style)
+  document.querySelectorAll('.profile-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.profile-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.profile-tab-pane').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      const target = btn.getAttribute('data-tab-target');
+      const pane = document.getElementById(target);
+      if (pane) pane.classList.add('active');
+
+      const modalBody = document.querySelector('.profile-modal-body');
+      if (modalBody) {
+        if (target === 'profile-tab-portfolio') {
+          modalBody.classList.add('tab-portfolio-active');
+        } else {
+          modalBody.classList.remove('tab-portfolio-active');
+        }
+      }
+    });
+  });
 }
+
+function renderizarPreviewPortfolio() {
+  DOM.portfolioPreviewGrid.innerHTML = '';
+  
+  // Renderiza originais (se houver, e não tiverem sido removidas)
+  estado.portfolioUrlsOriginais.forEach((url, index) => {
+    const item = document.createElement('div');
+    item.className = 'portfolio-preview-item';
+    item.innerHTML = `
+      <img src="${escapeHtml(url)}" alt="Portfólio atual" />
+      <button type="button" class="portfolio-remove-btn" onclick="window.removerPortfolioOriginal(${index})" title="Remover imagem">&times;</button>
+    `;
+    DOM.portfolioPreviewGrid.appendChild(item);
+  });
+
+  // Renderiza novas seleções
+  estado.arquivosPortfolioSelecionados.forEach((obj) => {
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const item = document.createElement('div');
+      item.className = 'portfolio-preview-item';
+      item.innerHTML = `
+        <img src="${event.target.result}" alt="Nova imagem do portfólio" />
+        <button type="button" class="portfolio-remove-btn" onclick="window.removerPortfolioNovo('${obj.id}')" title="Remover imagem">&times;</button>
+      `;
+      DOM.portfolioPreviewGrid.appendChild(item);
+    };
+    reader.readAsDataURL(obj.file);
+  });
+}
+
+window.removerPortfolioOriginal = function(index) {
+  estado.portfolioUrlsOriginais.splice(index, 1);
+  renderizarPreviewPortfolio();
+};
+
+window.removerPortfolioNovo = function(id) {
+  estado.arquivosPortfolioSelecionados = estado.arquivosPortfolioSelecionados.filter(obj => obj.id !== id);
+  renderizarPreviewPortfolio();
+};
 
 /**
  * Reseta o campo de upload de foto para o estado inicial.
@@ -322,6 +466,27 @@ function limparFotoSelecionada() {
       <circle cx="12" cy="13" r="4"></circle>
     </svg>
   `;
+}
+
+function limparLogoSelecionada() {
+  estado.arquivoLogoSelecionado = null;
+  estado.logoOriginalUrl = null;
+  DOM.proLogoInput.value = '';
+  DOM.logoUploadWrapper.classList.remove('has-file');
+  DOM.logoPreviewBox.innerHTML = `
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+      <circle cx="8.5" cy="8.5" r="1.5"></circle>
+      <polyline points="21 15 16 10 5 21"></polyline>
+    </svg>
+  `;
+}
+
+function limparPortfolioSelecionado() {
+  estado.arquivosPortfolioSelecionados = [];
+  estado.portfolioUrlsOriginais = [];
+  DOM.proPortfolioInput.value = '';
+  DOM.portfolioPreviewGrid.innerHTML = '';
 }
 
 // ==============================================================================
@@ -340,6 +505,8 @@ function abrirModalCadastro() {
   estado.profissionalEmEdicao = null;
   DOM.formAddPro.reset();
   limparFotoSelecionada();
+  limparLogoSelecionada();
+  limparPortfolioSelecionado();
 
   if (DOM.modalAddProTitle) {
     DOM.modalAddProTitle.textContent = 'Cadastrar Novo Profissional';
@@ -380,6 +547,8 @@ function abrirModalEdicao(pro) {
   estado.profissionalEmEdicao = pro;
   DOM.formAddPro.reset();
   limparFotoSelecionada();
+  limparLogoSelecionada();
+  limparPortfolioSelecionado();
 
   if (DOM.modalAddProTitle) {
     DOM.modalAddProTitle.textContent = 'Editar Profissional';
@@ -413,6 +582,17 @@ function abrirModalEdicao(pro) {
     DOM.photoPreviewBox.innerHTML = `<img src="${escapeHtml(pro.foto_url)}" alt="Foto atual" />`;
     DOM.photoUploadWrapper.classList.add('has-file');
   }
+  
+  if (pro.logo_url) {
+    estado.logoOriginalUrl = pro.logo_url;
+    DOM.logoPreviewBox.innerHTML = `<img src="${escapeHtml(pro.logo_url)}" alt="Logo atual" />`;
+    DOM.logoUploadWrapper.classList.add('has-file');
+  }
+
+  if (pro.portfolio_urls && pro.portfolio_urls.length > 0) {
+    estado.portfolioUrlsOriginais = [...pro.portfolio_urls];
+    renderizarPreviewPortfolio();
+  }
 
   abrirModal('modalAddPro');
 }
@@ -434,6 +614,7 @@ async function processarCadastroProfissional(e) {
 
   DOM.btnSaveProSubmit.disabled = true;
   let fotoFinalUrl = isEdicao ? estado.fotoOriginalUrl : null;
+  let logoFinalUrl = isEdicao ? estado.logoOriginalUrl : null;
 
   // Realiza upload da nova foto caso o usuário tenha selecionado um novo arquivo
   if (estado.arquivoFotoSelecionado) {
@@ -446,13 +627,44 @@ async function processarCadastroProfissional(e) {
     }
   }
 
+  if (estado.arquivoLogoSelecionado) {
+    DOM.btnSaveProSubmit.innerHTML = '<span class="spinner"></span><span>Enviando logo...</span>';
+    const { url, error: logoError } = await uploadFotoProfissional(estado.arquivoLogoSelecionado);
+    if (logoError) {
+      mostrarToast(`Aviso ao enviar logo: ${logoError.message}`, 'error');
+    } else {
+      logoFinalUrl = url;
+    }
+  }
+
+  // Upload das fotos do portfólio
+  let portfolioFinalUrls = [...estado.portfolioUrlsOriginais];
+  if (estado.arquivosPortfolioSelecionados.length > 0) {
+    DOM.btnSaveProSubmit.innerHTML = '<span class="spinner"></span><span>Enviando portfólio...</span>';
+    
+    const uploadPromises = estado.arquivosPortfolioSelecionados.map(async (obj) => {
+      const { url, error } = await uploadFotoProfissional(obj.file);
+      if (error) {
+        mostrarToast(`Aviso ao enviar imagem do portfólio: ${error.message}`, 'error');
+        return null;
+      }
+      return url;
+    });
+
+    const urlsCompletas = await Promise.all(uploadPromises);
+    const urlsSucesso = urlsCompletas.filter(u => u !== null);
+    portfolioFinalUrls = [...portfolioFinalUrls, ...urlsSucesso];
+  }
+
   const dados = {
     nome: DOM.proName.value,
     profissao: DOM.proRole.value,
     telefone: DOM.proPhone.value,
     ala: alaDestino,
     descricao: DOM.proDescription.value,
-    foto_url: fotoFinalUrl
+    foto_url: fotoFinalUrl,
+    logo_url: logoFinalUrl,
+    portfolio_urls: portfolioFinalUrls
   };
 
   DOM.btnSaveProSubmit.innerHTML = `<span class="spinner"></span><span>${isEdicao ? 'Atualizando...' : 'Salvando...'}</span>`;
@@ -475,6 +687,8 @@ async function processarCadastroProfissional(e) {
   fecharModal('modalAddPro');
   DOM.formAddPro.reset();
   limparFotoSelecionada();
+  limparLogoSelecionada();
+  limparPortfolioSelecionado();
   
   const msgSucesso = isEdicao 
     ? 'Informações do profissional atualizadas com sucesso!'

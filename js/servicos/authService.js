@@ -34,15 +34,13 @@ export async function obterPerfilAdministrador(userId) {
     return { perfil: null, error: err };
   }
 }
-
 /**
- * Realiza o login com email e senha.
- * @param {string} email 
- * @param {string} senha 
- * @returns {Promise<{ user: object|null, perfil: object|null, error: Error|null }>}
+ * @param { string } email
+ * @param { string } senha
+ * @returns { Promise < { user: object | null, perfil: object | null, error: Error | null } >}
  */
 export async function fazerLogin(email, senha) {
-  // Fail-Fast: Validação das entradas
+
   if (!email || typeof email !== 'string' || !email.includes('@')) {
     return { user: null, perfil: null, error: new Error('Por favor, informe um e-mail válido.') };
   }
@@ -59,12 +57,12 @@ export async function fazerLogin(email, senha) {
     if (error) throw error;
     if (!data.user) throw new Error('Não foi possível autenticar o usuário.');
 
-    // Busca o perfil de administrador associado (com a respectiva Ala)
+
     const { perfil, error: perfilError } = await obterPerfilAdministrador(data.user.id);
     if (perfilError) throw perfilError;
 
     if (!perfil) {
-      // Usuário autenticado mas sem registro na tabela perfis_administradores
+
       await supabase.auth.signOut();
       throw new Error('Este usuário não possui permissão de Administrador de Ala cadastrada no sistema.');
     }

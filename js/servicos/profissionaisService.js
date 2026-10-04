@@ -97,7 +97,7 @@ export async function listarProfissionais({ termoBusca = '', ala = 'todas' } = {
   try {
     let query = supabase
       .from('profissionais')
-      .select('id, nome, profissao, telefone, ala, foto_url, descricao, criado_por, criado_em')
+      .select('id, nome, profissao, telefone, ala, foto_url, logo_url, descricao, portfolio_urls, criado_por, criado_em')
       .order('nome', { ascending: true });
 
     // Aplica filtro por Ala se for diferente de 'todas'
@@ -132,7 +132,7 @@ export async function cadastrarProfissional(dadosProfissional) {
     // Validação Fail-Fast
     validarDadosProfissional(dadosProfissional);
 
-    const { nome, profissao, telefone, ala, foto_url, descricao } = dadosProfissional;
+    const { nome, profissao, telefone, ala, foto_url, logo_url, descricao, portfolio_urls } = dadosProfissional;
 
     // Sanitiza e formata
     const novoRegistro = {
@@ -141,7 +141,9 @@ export async function cadastrarProfissional(dadosProfissional) {
       telefone: telefone.trim(),
       ala: ala,
       foto_url: foto_url ? foto_url.trim() : null,
-      descricao: descricao ? descricao.trim() : null
+      logo_url: logo_url ? logo_url.trim() : null,
+      descricao: descricao ? descricao.trim() : null,
+      portfolio_urls: Array.isArray(portfolio_urls) ? portfolio_urls : []
     };
 
     const { data, error } = await supabase
@@ -174,7 +176,7 @@ export async function atualizarProfissional(id, dadosProfissional) {
     // Validação Fail-Fast
     validarDadosProfissional(dadosProfissional);
 
-    const { nome, profissao, telefone, ala, foto_url, descricao } = dadosProfissional;
+    const { nome, profissao, telefone, ala, foto_url, logo_url, descricao, portfolio_urls } = dadosProfissional;
 
     const registroAtualizado = {
       nome: nome.trim(),
@@ -187,6 +189,15 @@ export async function atualizarProfissional(id, dadosProfissional) {
     // Se uma nova foto_url foi informada ou explicitamente alterada
     if (foto_url !== undefined) {
       registroAtualizado.foto_url = foto_url ? foto_url.trim() : null;
+    }
+    
+    // Se uma nova logo_url foi informada ou explicitamente alterada
+    if (logo_url !== undefined) {
+      registroAtualizado.logo_url = logo_url ? logo_url.trim() : null;
+    }
+
+    if (portfolio_urls !== undefined) {
+      registroAtualizado.portfolio_urls = Array.isArray(portfolio_urls) ? portfolio_urls : [];
     }
 
     const { data, error } = await supabase

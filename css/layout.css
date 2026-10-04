@@ -273,6 +273,11 @@
     font-size: 0.95rem;
   }
   
+  .header-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
   .admin-badge-container {
     width: 100%;
     justify-content: space-between;

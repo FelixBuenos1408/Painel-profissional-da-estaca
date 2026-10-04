@@ -153,6 +153,27 @@ export function renderizarModalPerfil(pro, perfilAdmin, onEditarClick, onExcluir
     }
   }
 
+  // Limpa qualquer banner antigo do cabeçalho do modal e reseta classes
+  const modalBody = document.querySelector('.profile-modal-body');
+  const modalHeader = document.querySelector('.profile-modal-header');
+  if (modalBody && modalHeader) {
+    const bannerAntigo = modalBody.querySelector('.profile-modal-banner');
+    if (bannerAntigo) bannerAntigo.remove();
+    modalHeader.classList.remove('has-banner');
+    modalBody.classList.remove('tab-portfolio-active');
+
+    // Resetar abas para a aba de Informações por padrão
+    const btnInfo = document.querySelector('.profile-tab-btn[data-tab-target="profile-tab-info"]');
+    const btnPortfolio = document.querySelector('.profile-tab-btn[data-tab-target="profile-tab-portfolio"]');
+    const paneInfo = document.getElementById('profile-tab-info');
+    const panePortfolio = document.getElementById('profile-tab-portfolio');
+
+    if (btnInfo) btnInfo.classList.add('active');
+    if (btnPortfolio) btnPortfolio.classList.remove('active');
+    if (paneInfo) paneInfo.classList.add('active');
+    if (panePortfolio) panePortfolio.classList.remove('active');
+  }
+
   if (nameEl) nameEl.textContent = pro.nome;
   if (roleEl) roleEl.textContent = pro.profissao;
   if (wardBadgeEl) {
@@ -188,6 +209,88 @@ export function renderizarModalPerfil(pro, perfilAdmin, onEditarClick, onExcluir
     } else {
       editBtn.style.display = 'none';
       editBtn.onclick = null;
+    }
+  }
+
+  // Renderizar Aba Portfólio (Logo da Empresa + Galeria de Fotos)
+  const portfolioTabPane = document.getElementById('profile-tab-portfolio');
+  if (portfolioTabPane) {
+    const temLogo = !!pro.logo_url;
+    const fotos = (pro.portfolio_urls && Array.isArray(pro.portfolio_urls)) ? pro.portfolio_urls : [];
+    const temFotos = fotos.length > 0;
+
+    let portfolioHtml = '';
+
+    // 1. Logo da Empresa (visível SOMENTE aqui na aba Portfólio)
+    if (temLogo) {
+      portfolioHtml += `
+        <div class="portfolio-logo-section">
+          <div class="portfolio-section-label">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+              <circle cx="8.5" cy="8.5" r="1.5"></circle>
+              <polyline points="21 15 16 10 5 21"></polyline>
+            </svg>
+            <span>Logo da Empresa / Marca</span>
+          </div>
+          <div class="portfolio-logo-card">
+            <img src="${escapeHtml(pro.logo_url)}" alt="Logo de ${escapeHtml(pro.nome)}" class="portfolio-logo-img clickable-photo" id="profileModalPortfolioLogo" title="Clique para ampliar a logo" />
+          </div>
+        </div>
+      `;
+    }
+
+    // 2. Fotos de Trabalhos e Serviços
+    if (temFotos) {
+      portfolioHtml += `
+        ${temLogo ? `<div class="portfolio-section-label" style="margin-top: 1.25rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+          <span>Fotos de Trabalhos & Serviços</span>
+        </div>` : ''}
+        <div class="portfolio-gallery-grid" id="profileModalPortfolioGrid"></div>
+      `;
+    } else if (!temLogo) {
+      portfolioHtml = `
+        <div class="portfolio-empty-state">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+          <p>Nenhuma foto ou logo adicionada ao portfólio.</p>
+        </div>
+      `;
+    }
+
+    portfolioTabPane.innerHTML = portfolioHtml;
+
+    // Vincula clique para zoom na logo
+    if (temLogo) {
+      const logoEl = portfolioTabPane.querySelector('#profileModalPortfolioLogo');
+      if (logoEl && onFotoClick) {
+        logoEl.onclick = () => {
+          onFotoClick(pro.logo_url, `Logo de ${pro.nome}`);
+        };
+      }
+    }
+
+    // Vincula clique para zoom nas fotos do portfólio
+    if (temFotos) {
+      const grid = portfolioTabPane.querySelector('#profileModalPortfolioGrid');
+      if (grid) {
+        fotos.forEach(url => {
+          const item = document.createElement('div');
+          item.className = 'portfolio-gallery-item';
+          item.innerHTML = `<img src="${escapeHtml(url)}" alt="Item do portfólio de ${escapeHtml(pro.nome)}" />`;
+          item.onclick = () => {
+            if (onFotoClick) onFotoClick(url, `Portfólio de ${pro.nome}`);
+          };
+          grid.appendChild(item);
+        });
+      }
     }
   }
 }
@@ -232,14 +335,29 @@ export function renderizarCardsProfissionais(
     const podeGerenciar = perfilAdmin && (perfilAdmin.e_super_admin || perfilAdmin.ala === pro.ala);
 
     const temFoto = !!pro.foto_url;
+    const temLogo = !!pro.logo_url;
+    
     const avatarHtml = temFoto 
       ? `<div class="pro-avatar with-photo clickable-photo" title="Clique para ampliar a foto" aria-label="Ampliar foto">
            <img src="${escapeHtml(pro.foto_url)}" alt="${escapeHtml(pro.nome)}" class="pro-avatar-img" onerror="this.parentElement.classList.remove('with-photo','clickable-photo'); this.parentElement.innerHTML='${iniciais}';" />
          </div>`
       : `<div class="pro-avatar" aria-hidden="true">${iniciais}</div>`;
 
+
     const descricaoSnippet = pro.descricao 
       ? `<p class="pro-desc-snippet">${escapeHtml(pro.descricao)}</p>` 
+      : '';
+
+    const temPortfolio = (pro.portfolio_urls && pro.portfolio_urls.length > 0) || !!pro.logo_url;
+    const portfolioLinkHtml = temPortfolio 
+      ? `<div class="pro-portfolio-link" aria-label="Visualizar portfólio de ${escapeHtml(pro.nome)}" title="Ver fotos de ${escapeHtml(pro.nome)}">
+           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+             <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+             <circle cx="8.5" cy="8.5" r="1.5"></circle>
+             <polyline points="21 15 16 10 5 21"></polyline>
+           </svg>
+           <span>Visualizar Portfólio</span>
+         </div>`
       : '';
 
     card.innerHTML = `
@@ -257,6 +375,7 @@ export function renderizarCardsProfissionais(
         </div>
 
         ${descricaoSnippet}
+        ${portfolioLinkHtml}
       </div>
 
       <div class="pro-card-footer">
@@ -307,10 +426,46 @@ export function renderizarCardsProfissionais(
     const cardContent = card.querySelector('.pro-card-content');
     if (cardContent && onVerPerfil) {
       cardContent.addEventListener('click', (e) => {
-        // Se clicou diretamente no avatar com foto, não abre o perfil (abre o lightbox)
-        if (e.target.closest('.pro-avatar.clickable-photo')) return;
+        // Se clicou diretamente no avatar, não abre o perfil (abre o lightbox)
+        if (e.target.closest('.pro-avatar.clickable-photo')) {
+          return;
+        }
+
+        // Se clicou no link de portfólio, evitamos duplicar a ação (já tratada abaixo)
+        if (e.target.closest('.pro-portfolio-link')) {
+          return;
+        }
+
         onVerPerfil(pro);
+        
+        // Garante que a aba de Informações é a ativa ao abrir pelo card normal
+        setTimeout(() => {
+          const btnAbaInfo = document.querySelector('.profile-tab-btn[data-tab-target="profile-tab-info"]');
+          if (btnAbaInfo) btnAbaInfo.click();
+        }, 50);
       });
+    }
+
+    // Evento de clique específico no link de portfólio
+    if (temPortfolio) {
+      const portfolioLink = card.querySelector('.pro-portfolio-link');
+      if (portfolioLink && onVerPerfil) {
+        portfolioLink.addEventListener('click', (e) => {
+          e.stopPropagation();
+          onVerPerfil(pro);
+          
+          // Aguarda um pequeno intervalo para renderizar o modal e então clica na aba Portfólio
+          setTimeout(() => {
+            const btnAbaPortfolio = document.querySelector('.profile-tab-btn[data-tab-target="profile-tab-portfolio"]');
+            if (btnAbaPortfolio) btnAbaPortfolio.click();
+            
+            const portfolioTabPane = document.getElementById('profile-tab-portfolio');
+            if (portfolioTabPane) {
+              portfolioTabPane.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }, 50);
+        });
+      }
     }
 
     // Evento de clique na foto para zoom (Lightbox)

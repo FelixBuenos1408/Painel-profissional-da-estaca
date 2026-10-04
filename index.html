@@ -15,6 +15,8 @@
   <link rel="stylesheet" href="./css/globais.css">
   <link rel="stylesheet" href="./css/layout.css">
   <link rel="stylesheet" href="./css/componentes.css">
+  <link rel="stylesheet" href="./css/logo.css">
+  <link rel="stylesheet" href="./css/portfolio.css">
 </head>
 
 <body>
@@ -265,27 +267,89 @@
           </div>
 
           <div class="form-group">
-            <label class="form-label">Foto de Perfil (Opcional)</label>
-            <div class="photo-upload-wrapper" id="photoUploadWrapper">
-              <div class="photo-preview-box" id="photoPreviewBox">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                  <circle cx="12" cy="13" r="4"></circle>
-                </svg>
+            <label class="form-label">Imagens (Opcional)</label>
+            <div class="image-tabs-container">
+              <div class="image-tabs-header">
+                <button type="button" class="image-tab-btn active" data-tab-target="tab-foto">Foto de Perfil</button>
+                <button type="button" class="image-tab-btn" data-tab-target="tab-logo">Logo da Empresa</button>
+                <button type="button" class="image-tab-btn" data-tab-target="tab-portfolio">Portfólio</button>
               </div>
-              <div class="photo-upload-actions">
-                <label for="proPhotoInput" class="photo-upload-btn">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>
-                  <span>Escolher Foto</span>
-                </label>
-                <input type="file" id="proPhotoInput" class="visually-hidden"
-                  accept="image/png, image/jpeg, image/webp">
-                <div class="form-hint">JPG, PNG ou WEBP (máx. 5MB)</div>
-                <button type="button" class="photo-remove-btn" id="btnRemovePhoto">Remover foto</button>
+              <div class="image-tabs-body">
+                <!-- Aba: Foto de Perfil -->
+                <div class="image-tab-pane active" id="tab-foto">
+                  <div class="photo-upload-wrapper" id="photoUploadWrapper">
+                    <div class="photo-preview-box" id="photoPreviewBox">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                      </svg>
+                    </div>
+                    <div class="photo-upload-actions">
+                      <label for="proPhotoInput" class="photo-upload-btn">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="17 8 12 3 7 8"></polyline>
+                          <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span>Escolher Foto</span>
+                      </label>
+                      <input type="file" id="proPhotoInput" class="visually-hidden"
+                        accept="image/png, image/jpeg, image/webp">
+                      <div class="form-hint">JPG, PNG ou WEBP (máx. 5MB)</div>
+                      <button type="button" class="photo-remove-btn" id="btnRemovePhoto">Remover foto</button>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Aba: Logo da Empresa -->
+                <div class="image-tab-pane" id="tab-logo">
+                  <div class="photo-upload-wrapper" id="logoUploadWrapper">
+                    <div class="photo-preview-box" id="logoPreviewBox">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                      </svg>
+                    </div>
+                    <div class="photo-upload-actions">
+                      <label for="proLogoInput" class="photo-upload-btn">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                          <polyline points="17 8 12 3 7 8"></polyline>
+                          <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <span>Escolher Logo</span>
+                      </label>
+                      <input type="file" id="proLogoInput" class="visually-hidden"
+                        accept="image/png, image/jpeg, image/webp">
+                      <div class="form-hint">JPG, PNG ou WEBP (máx. 5MB)</div>
+                      <button type="button" class="photo-remove-btn" id="btnRemoveLogo">Remover logo</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Aba: Portfólio -->
+                <div class="image-tab-pane" id="tab-portfolio">
+                  <div class="portfolio-upload-area">
+                    <div class="photo-upload-actions" style="margin-bottom: 1rem;">
+                      <label for="proPortfolioInput" class="photo-upload-btn">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                          <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        <span>Adicionar Fotos ao Portfólio (Máx. 5)</span>
+                      </label>
+                      <input type="file" id="proPortfolioInput" class="visually-hidden"
+                        accept="image/png, image/jpeg, image/webp" multiple>
+                      <div class="form-hint">Você pode selecionar até 5 imagens de uma vez.</div>
+                    </div>
+                    
+                    <div class="portfolio-preview-grid" id="portfolioPreviewGrid">
+                      <!-- Miniaturas renderizadas dinamicamente via JS -->
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -325,31 +389,52 @@
           </div>
         </div>
 
-        <div class="profile-section">
-          <h4 class="profile-section-title">Sobre os Serviços</h4>
-          <div class="profile-bio-text" id="profileModalBio">
-            Nenhuma descrição detalhada informada.
-          </div>
+        <div class="profile-tabs-nav">
+          <button type="button" class="profile-tab-btn active" data-tab-target="profile-tab-info">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            <span>Informações</span>
+          </button>
+          <button type="button" class="profile-tab-btn" data-tab-target="profile-tab-portfolio">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            <span>Portfólio</span>
+          </button>
         </div>
 
-        <div class="profile-section">
-          <h4 class="profile-section-title">Contato Direto</h4>
-          <div class="profile-contact-card">
-            <div class="profile-phone-info">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path
-                  d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
-                </path>
-              </svg>
-              <span id="profileModalPhone">(85) 99999-9999</span>
+        <div class="profile-tabs-body">
+          <div class="profile-tab-pane active" id="profile-tab-info">
+            <div class="profile-section">
+              <h4 class="profile-section-title">Sobre os Serviços</h4>
+              <div class="profile-bio-text" id="profileModalBio">
+                Nenhuma descrição detalhada informada.
+              </div>
             </div>
-            <a href="#" target="_blank" rel="noopener noreferrer" class="whatsapp-link" id="profileModalWhatsAppBtn">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path
-                  d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84-1.56 1.56-3.64 2.42-5.84 2.42-1.42 0-2.82-.37-4.04-1.08l-.29-.17-3.11.82.83-3.03-.19-.3A8.196 8.196 0 0 1 3.8 11.91c0-4.54 3.7-8.24 8.25-8.24zm4.52 11.66c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.39-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.17-.25.25-.41.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07s.89 2.4 1.02 2.57c.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.53.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.22-.17-.47-.3z" />
-              </svg>
-              <span>Conversar no WhatsApp</span>
-            </a>
+
+            <div class="profile-section">
+              <h4 class="profile-section-title">Contato Direto</h4>
+              <div class="profile-contact-card">
+                <div class="profile-phone-info">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path
+                      d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                    </path>
+                  </svg>
+                  <span id="profileModalPhone">(85) 99999-9999</span>
+                </div>
+                <a href="#" target="_blank" rel="noopener noreferrer" class="whatsapp-link" id="profileModalWhatsAppBtn">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2zm.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84-1.56 1.56-3.64 2.42-5.84 2.42-1.42 0-2.82-.37-4.04-1.08l-.29-.17-3.11.82.83-3.03-.19-.3A8.196 8.196 0 0 1 3.8 11.91c0-4.54 3.7-8.24 8.25-8.24zm4.52 11.66c-.25-.12-1.47-.72-1.7-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-2-1.23-.74-.66-1.24-1.47-1.39-1.72-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.15.17-.25.25-.41.08-.17.04-.31-.02-.43s-.56-1.34-.76-1.84c-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.23.25-.87.85-.87 2.07s.89 2.4 1.02 2.57c.12.17 1.75 2.67 4.24 3.74.59.26 1.05.41 1.41.53.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.68-1.18.21-.58.21-1.07.15-1.18-.06-.11-.22-.17-.47-.3z" />
+                  </svg>
+                  <span>Conversar no WhatsApp</span>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+          <div class="profile-tab-pane" id="profile-tab-portfolio">
+            <div class="portfolio-gallery-grid" id="profileModalPortfolioGrid">
+              <!-- Renderizado dinamicamente via JS -->
+            </div>
           </div>
         </div>
       </div>
